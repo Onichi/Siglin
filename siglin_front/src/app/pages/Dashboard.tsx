@@ -82,27 +82,23 @@ export function Dashboard() {
                   <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/90 to-transparent" />
                 </div>
 
-                {/* Изменено: p-5 для мобилок, flex-row и items-center всегда */}
                 <div className="relative p-5 md:p-10 z-10 flex flex-row gap-4 md:gap-8 items-center justify-between">
 
                   {/* Левая часть с текстом */}
-                  <div className="flex-1 min-w-0"> {/* min-w-0 предотвращает выезд текста за границы */}
+                  <div className="flex-1 min-w-0">
                     <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-green-500/10 text-green-500 text-[10px] md:text-xs font-semibold tracking-wide uppercase mb-2 md:mb-4">
                       <Sparkles size={12} className="md:w-3.5 md:h-3.5" />
                       Продолжить
                     </div>
 
-                    {/* Ограничиваем название одной строкой на мобилках */}
                     <h1 className="font-['Manrope'] text-lg md:text-4xl font-bold text-white mb-1 md:mb-3 truncate">
                       {activeLesson ? activeLesson.title : 'Загрузка...'}
                     </h1>
 
-                    {/* Скрываем описание на мобилках, чтобы не раздувать блок */}
                     <p className="hidden md:block text-zinc-400 text-base md:text-lg leading-relaxed mb-6">
                       {activeLesson ? (activeLesson.description || 'Описание отсутствует') : ''}
                     </p>
 
-                    {/* Уменьшенная кнопка для мобильных */}
                     <button
                       onClick={() => navigate(`/lesson/${activeLesson.id}`)}
                       className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-black font-semibold px-4 py-2 md:px-6 md:py-3.5 rounded-lg md:rounded-xl transition-all text-sm md:text-base"
@@ -112,7 +108,7 @@ export function Dashboard() {
                     </button>
                   </div>
 
-                  {/* Progress Circle - Теперь справа и меньше */}
+                  {/* Progress Circle Visual */}
                   <div className="shrink-0 relative w-20 h-20 md:w-32 md:h-32 flex items-center justify-center">
                     <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                       <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="10" fill="transparent" className="text-zinc-800" />
@@ -124,7 +120,6 @@ export function Dashboard() {
                         strokeWidth="10"
                         fill="transparent"
                         strokeDasharray={strokeDasharray}
-                        /* ВАЖНО: Здесь должны быть двойные фигурные скобки {{ }} */
                         style={{
                           strokeDashoffset: strokeDashoffset,
                           transition: 'stroke-dashoffset 1s ease-in-out'
@@ -136,21 +131,9 @@ export function Dashboard() {
                       <span className="font-['Manrope'] text-sm md:text-2xl font-bold text-white">{progressPercent}%</span>
                     </div>
                   </div>
-              </motion.div>
 
-                  {/* Progress Circle Visual */}
-                  <div className="shrink-0 relative w-32 h-32 flex items-center justify-center">
-                    <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-zinc-800" />
-                      <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray = {strokeDasharray} style={{strokeDashoffset: strokeDashoffset, transition: 'stroke-dashoffset 1s ease-in-out'}} className="text-green-500" />
-                    </svg>
-                    <div className="absolute flex flex-col items-center justify-center">
-                      <span className="font-['Manrope'] text-2xl font-bold text-white">{progressPercent}%</span>
-                    </div>
-                  </div>
                 </div>
               </motion.div>
-
               {/* Modules Path View */}
               <div>
                 <h2 className="font-['Manrope'] text-xl font-bold text-white mb-6">Программа курса</h2>
