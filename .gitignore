@@ -13,7 +13,7 @@ siglin_front/yarn-error.log*
 siglin_back/__pycache__/
 siglin_back/venv/
 siglin_back/.pytest_cache/
-Diplom_back/env/
+siglin_back/env/
 *.pyc
 *.pyo
 *.pyd
