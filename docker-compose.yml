@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # === 1. РОУТЕР И SSL (TRAEFIK) ===
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+    command:
+      - "--api.insecure=false"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # Редирект HTTP -> HTTPS
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      # Настройка SSL (Let's Encrypt)
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.email=sergei.xokamoka07@yandex.ru"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsecrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik/acme.json:/letsecrypt/acme.json"
+    restart: always
+
+  # === 2. БАЗА ДАННЫХ (POSTGRESQL) ===
+  db:
+    image: postgres:15-alpine
+    container_name: siglin_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  # === 3. БЭКЕНД (FASTAPI) ===
+  backend:
+    build:
+      context: ./siglin_back
+      dockerfile: backend.Dockerfile
+    container_name: siglin_backend
+    depends_on:
+      - db
+    environment:
+      # Собираем URL динамически из переменных окружения
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      SECRET_KEY: ${SECRET_KEY}
+      ALGORITHM: ${ALGORITHM}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
+    volumes:
+      - backend_static:/app/static
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`api.siglin.ru`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=myresolver"
+    restart: always
+
+  # === 4. ФРОНТЕНД (REACT + NGINX) ===
+  frontend:
+    build:
+      context: ./siglin_front
+      dockerfile: frontend.Dockerfile
+    container_name: siglin_frontend
+    depends_on:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      # Перехватываем и домен с www, и без него
+      - "traefik.http.routers.frontend.rule=Host(`siglin.ru`) || Host(`www.siglin.ru`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=myresolver"
+    restart: always
+
+# === ОБЩИЕ ХРАНИЛИЩА (VOLUMES) ===
+volumes:
+  postgres_data:
+  backend_static:
