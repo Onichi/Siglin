@@ -58,7 +58,7 @@ export function AppLayout() {
     }
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-zinc-300 font-['Inter'] selection:bg-green-500/30 selection:text-green-200 overflow-x-hidden flex">
+        <div className="min-h-[100dvh] bg-[#0a0a0a] text-zinc-300 font-['Inter'] selection:bg-green-500/30 selection:text-green-200 overflow-x-hidden flex">
 
             {/* Мобильный оверлей */}
             <AnimatePresence>

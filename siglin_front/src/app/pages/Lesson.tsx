@@ -230,7 +230,7 @@ export function Lesson() {
 
   // --- ОСНОВНОЙ РЕНДЕР ---
   return (
-      <div className="flex flex-col h-screen bg-[#0a0a0a] text-zinc-100 font-['Inter'] relative">
+      <div className="flex flex-col h-[100dvh] bg-[#0a0a0a] text-zinc-100 font-['Inter'] relative">
 
         {/* Полоса прогресса в самом верху */}
         <div className="absolute top-0 left-0 h-1 bg-green-500 transition-all duration-700 ease-out z-50" style={{ width: `${progressPercent}%` }} />
@@ -259,8 +259,8 @@ export function Lesson() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-hidden p-4 md:p-6 lg:p-8 flex flex-col">
-          <div className="max-w-7xl mx-auto w-full h-full flex flex-col lg:flex-row gap-6">
+        <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8 flex flex-col">
+          <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row gap-6">
 
             {/* Левая часть: Референс */}
             <div className="flex-1 min-h-[400px] md:min-h-0 bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden flex flex-col relative shadow-2xl">
@@ -299,7 +299,7 @@ export function Lesson() {
             <div className="flex-1 flex flex-col gap-6">
 
               {/* 🔥 ДИНАМИЧЕСКИЙ ГЛАВНЫЙ КОНТЕЙНЕР КАМЕРЫ 🔥 */}
-              <div className={`flex-1 bg-[#0a0a0a] border rounded-3xl overflow-hidden relative transition-all duration-300 ${
+              <div className={`flex-1 min-h[400px] lg:min-h-0 bg-[#0a0a0a] border rounded-3xl overflow-hidden relative transition-all duration-300 ${
                   showIntermediateSuccess || isFinalSuccess
                       ? 'ring-4 ring-green-500 shadow-[0_0_30px_rgba(34,197,94,0.2)]'
                       : 'border-zinc-800 shadow-2xl'
