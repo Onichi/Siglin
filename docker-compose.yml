@@ -1,13 +1,12 @@
-version: '3.8'
-
 services:
   # === 1. РОУТЕР И SSL (TRAEFIK) ===
   traefik:
-    image: traefik:v3.0
+    image: traefik:v3.6.1
     container_name: traefik
     command:
       - "--api.insecure=false"
       - "--providers.docker=true"
+      - "--providers.docker.allowEmptyServices=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
@@ -18,13 +17,13 @@ services:
       - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
       - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
       - "--certificatesresolvers.myresolver.acme.email=sergei.xokamoka07@yandex.ru"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsecrypt/acme.json"
+      - "--certificatesresolvers.myresolver.acme.storage=acme.json"
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./traefik/acme.json:/letsecrypt/acme.json"
+      - "./traefik/acme.json:/acme.json"
     restart: always
 
   # === 2. БАЗА ДАННЫХ (POSTGRESQL) ===
@@ -60,6 +59,7 @@ services:
       - "traefik.http.routers.backend.rule=Host(`api.siglin.ru`)"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.tls.certresolver=myresolver"
+      - "traefik.http.services.backend.loadbalancer.server.port=8000"
     restart: always
 
   # === 4. ФРОНТЕНД (REACT + NGINX) ===
@@ -77,6 +77,25 @@ services:
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls.certresolver=myresolver"
     restart: always
+
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_siglin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: sergei.xokamoka07@yandex.ru
+      PGADMIN_DEFAULT_PASSWORD: 520k6btrfzT!@
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pgadmin.rule=Host(`db.siglin.ru`)" # Или используй siglin.ru && PathPrefix(`/pgadmin`)
+      - "traefik.http.routers.pgadmin.entrypoints=websecure"
+      - "traefik.http.routers.pgadmin.tls.certresolver=myresolver"
+      - "traefik.http.services.pgadmin.loadbalancer.server.port=80"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
 
 # === ОБЩИЕ ХРАНИЛИЩА (VOLUMES) ===
 volumes:
