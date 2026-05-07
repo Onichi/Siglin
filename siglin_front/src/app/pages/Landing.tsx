@@ -10,11 +10,18 @@ import {
   PlayCircle
 } from 'lucide-react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
-import { DEFAULT_GESTURE_PLACEHOLDER } from '../store/useAppStore';
+import { DEFAULT_GESTURE_PLACEHOLDER, useAppStore } from '../store/useAppStore';
 
 
 export function Landing() {
   const navigate = useNavigate();
+  const isAuthenticated = useAppStore((state) => state.isAuthenticated);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const bgHeroImage = DEFAULT_GESTURE_PLACEHOLDER;
 
@@ -37,10 +44,10 @@ export function Landing() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-zinc-300 font-['Inter'] selection:bg-green-500/30 selection:text-green-200 overflow-hidden flex flex-col relative">
+    <div className="min-h-[100dvh] bg-[#0a0a0a] text-zinc-300 font-['Inter'] selection:bg-green-500/30 selection:text-green-200 overflow-x-hidden flex flex-col relative">
 
       {/* Background */}
-      <div className="absolute inset-0 z-0">
+      <div className="fixed inset-0 z-0">
         <ImageWithFallback
           src={bgHeroImage}
           alt="Hands Communication"
