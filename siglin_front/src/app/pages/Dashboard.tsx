@@ -124,7 +124,11 @@ export function Dashboard() {
                         strokeWidth="10"
                         fill="transparent"
                         strokeDasharray={strokeDasharray}
-                        style={{strokeDashoffset: strokeDashoffset, transition: 'stroke-dashoffset 1s ease-in-out'}}
+                        /* ВАЖНО: Здесь должны быть двойные фигурные скобки {{ }} */
+                        style={{
+                          strokeDashoffset: strokeDashoffset,
+                          transition: 'stroke-dashoffset 1s ease-in-out'
+                        }}
                         className="text-green-500"
                       />
                     </svg>
@@ -132,7 +136,6 @@ export function Dashboard() {
                       <span className="font-['Manrope'] text-sm md:text-2xl font-bold text-white">{progressPercent}%</span>
                     </div>
                   </div>
-                </div>
               </motion.div>
 
                   {/* Progress Circle Visual */}
